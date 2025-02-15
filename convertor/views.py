@@ -32,8 +32,7 @@ class VTTViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListModelMixin,
       print(f"Error during audio-to-text conversion: {e}" )
       if os.path.exists(audio_file_path):
           os.remove(audio_file_path)
-      raise Exception(f'Transcript Failed: {str(e)}')
-
+      return Response({'error': e},  status=status.HTTP_500_INTERNAL_SERVER_ERROR)
   def convert_audio_to_text(self, audio_file_path):
     model = whisper.load_model('tiny')
     result = model.transcribe(audio_file_path)
