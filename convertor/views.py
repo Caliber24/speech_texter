@@ -1,7 +1,4 @@
 import os.path
-import time
-from logging import exception
-
 import whisper
 from rest_framework.viewsets import ModelViewSet, GenericViewSet, mixins, generics
 from rest_framework.permissions import IsAuthenticated

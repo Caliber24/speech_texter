@@ -11,12 +11,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-<<<<<<< Updated upstream
 from datetime import timedelta
-=======
 import os
-
->>>>>>> Stashed changes
+from dotenv import load_dotenv
+load_dotenv()
+DOMAIN = 'localhost:5173'
+SITE_NAME = 'SPEECH TEXTER'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -144,21 +144,24 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),
+    'UPDATE_LAST_LOGIN': True,
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=6)
 }
 
 
+AUTH_USER_MODEL = 'core.User'
+
 DJOSER ={
     'LOGIN_FIELD': 'email',
     'USER_CREATE_PASSWORD_RETYPE': True,
-    'ACTIVATE_URL': 'activate/{uid}/{token}',
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL':True,
     'SEND_CONFIRMATION_EMAIL': True,
     'PASSWORD_CHANGE_EMAIL_CONFIRMATION': True,
+    'PASSWORD_RESET_CONFIRM_URL' : 'account/reset_password_confirm/{uid}/{token}',
     'SET_PASSWORD_RETYPE': True,
     'USERNAME_RESET_SHOW_EMAIL_NOT_FOUND': True,
-    
 }
 
 # Email Configurations
