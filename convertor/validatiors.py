@@ -1,14 +1,13 @@
-import magic
+import mimetypes
 from django.core.exceptions import ValidationError
 
-def validate_audio_file(file_path):
-  try:
-    mime = magic.Magic(mime=True)
-    file_type = mime = mime.from_file(file_path)
+
+def validate_audio_file(file):
     allowed_types = ['audio/mpeg', 'audio/wav', 'audio/ogg']
-  
-    if file_type not in allowed_types:
-      raise ValidationError(f'The file type {file_type} is not allowed. Only MP3, WAV, and OGG files are permitted.')
-  except Exception as e:
-    raise ValidationError(f'An error occured while validating the file: {e}')
+    mime_type, _ = mimetypes.guess_type(file.name)
+
+    if mime_type not in allowed_types:
+        raise ValidationError(
+            f'The file type {mime_type} is not allowed. Only {", ".join(allowed_types)} files are permitted.'
+        )
   

@@ -14,12 +14,12 @@ from pathlib import Path
 from datetime import timedelta
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
 DOMAIN = 'localhost:5173'
 SITE_NAME = 'SPEECH TEXTER'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-)l(^7n)oo0aj41f3&dff=ha8vo-zh5#apzpeyxi#c+!j$d^9c$
 DEBUG = True
 
 ALLOWED_HOSTS = []
-CORS_ALLOW_ALL_ORIGIINS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
     'corsheaders',
     'rest_framework',
     'drf_yasg',
@@ -81,7 +82,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'speech_texter.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -91,7 +91,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -111,7 +110,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -122,7 +120,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -135,10 +132,8 @@ STATIC_ROOT = BASE_DIR / 'static'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES':[
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication'
     ]
 }
@@ -150,17 +145,16 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=6)
 }
 
-
 AUTH_USER_MODEL = 'core.User'
 
-DJOSER ={
+DJOSER = {
     'LOGIN_FIELD': 'email',
     'USER_CREATE_PASSWORD_RETYPE': True,
     'ACTIVATION_URL': 'activate/{uid}/{token}',
-    'SEND_ACTIVATION_EMAIL':True,
+    'SEND_ACTIVATION_EMAIL': True,
     'SEND_CONFIRMATION_EMAIL': True,
     'PASSWORD_CHANGE_EMAIL_CONFIRMATION': True,
-    'PASSWORD_RESET_CONFIRM_URL' : 'account/reset_password_confirm/{uid}/{token}',
+    'PASSWORD_RESET_CONFIRM_URL': 'account/reset_password_confirm/{uid}/{token}',
     'SET_PASSWORD_RETYPE': True,
     'USERNAME_RESET_SHOW_EMAIL_NOT_FOUND': True,
 }
@@ -173,3 +167,34 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 EMAIL_USE_TLS = True
 
+ASSEMBLYAI_API_KEY = os.environ.get("ASSEMBLYAI_API_KEY")
+
+# Configuration Liara
+
+LIARA_ENDPOINT = os.environ.get("LIARA_ENDPOINT")
+LIARA_BUCKET_NAME = os.environ.get("LIARA_BUCKET_NAME")
+LIARA_ACCESS_KEY = os.environ.get("LIARA_ACCESS_KEY")
+LIARA_SECRET_KEY = os.environ.get("LIARA_SECRET_KEY")
+
+AWS_ACCESS_KEY_ID = LIARA_ACCESS_KEY
+AWS_SECRET_ACCESS_KEY = LIARA_SECRET_KEY
+AWS_STORAGE_BUCKET_NAME = LIARA_BUCKET_NAME
+AWS_S3_ENDPOINT_URL = LIARA_ENDPOINT
+AWS_S3_REGION_NAME = 'us-east-2'
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+
+STORAGES = {
+    'default': {
+        'BACKEND': 'storages.backends.s3boto3.S3Boto3Storage',
+        'OPTIONS': {
+            'bucket_name': LIARA_BUCKET_NAME,
+            'endpoint_url': LIARA_ENDPOINT,
+            'access_key': LIARA_ACCESS_KEY,
+            'secret_key': LIARA_SECRET_KEY,
+        }
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+
+}
