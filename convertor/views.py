@@ -15,14 +15,6 @@ from .convertor import transcribe_audio
 from django.conf import settings
 import os
 
-# set Liara Bucket Conf
-LIARA = {
-    'endpoint': settings.LIARA_ENDPOINT,
-    'accesskey': settings.LIARA_ACCESS_KEY,
-    'secretkey': settings.LIARA_SECRET_KEY,
-    'bucket': settings.LIARA_BUCKET_NAME
-}
-
 
 # Create your views here.
 
@@ -44,7 +36,9 @@ class VTTViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListModelMixin,
                           aws_secret_access_key=LIARA['secretkey'],
                           config=Config(signature_version='s3v4', s3={'addressing_style': 'path'}, region_name='default'))
         try:
-            s3.put_object(Bucket=LIARA['bucket'], Key=file_name, Body=audio_file.read(), ACL='public-read')
+            with audio_file.open('rb') as audio_file_open:
+                s3.upload_fileobj(audio_file_open, LIARA['bucket'], file_name)
+                
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         file_path = f'{LIARA["endpoint"]}/{LIARA["bucket"]}/{file_name}'
