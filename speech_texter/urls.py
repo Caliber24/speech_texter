@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 from drf_yasg import openapi
@@ -25,19 +26,19 @@ from django.conf.urls.static import static
 schema_view = get_schema_view(
     openapi.Info(
         title="Speech Texter API",
-        default_version='v1',
+        default_version="v1",
         description="API for speech texter",
     ),
     public=True,
-    permission_classes=[AllowAny]
+    permission_classes=[AllowAny],
 )
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('auth/', include('djoser.urls')),
-    path('auth/', include('djoser.urls.jwt')),
-    path('swagger/', schema_view.with_ui('swagger'), name = 'schema-swagger-ui'),
-    path('', include('convertor.urls') )
+    path("admin/", admin.site.urls),
+    path("auth/", include("djoser.urls")),
+    path("auth/", include("djoser.urls.jwt")),
+    path("ocr/", include("image_ocr.urls")),
+    path("swagger/", schema_view.with_ui("swagger"), name="schema-swagger-ui"),
+    path("", include("convertor.urls")),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
