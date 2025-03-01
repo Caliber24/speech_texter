@@ -2,8 +2,6 @@ annotated-types==0.7.0
 anyio==4.8.0
 asgiref==3.8.1
 assemblyai==0.37.0
-boto3==1.36.26
-botocore==1.36.26
 certifi==2025.1.31
 cffi==1.17.1
 charset-normalizer==3.4.1
@@ -37,7 +35,6 @@ PyJWT==2.10.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 python-magic==0.4.27
-python-magic-bin==0.4.14
 python3-openid==3.2.0
 pytz==2025.1
 PyYAML==6.0.2

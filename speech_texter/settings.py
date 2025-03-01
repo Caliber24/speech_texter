@@ -132,6 +132,10 @@ STATIC_ROOT = BASE_DIR / 'static'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+AUTHENTICATION_BACKENDS = ['core.auth_backends.CustomAuthBackend',
+                           'django.contrib.auth.backends.ModelBackend']
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication'
@@ -141,60 +145,29 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),
     'UPDATE_LAST_LOGIN': True,
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=6)
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=365),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=365*5),
+    'TOKEN_OBTAIN_SERIALIZER':'core.serializers.CustomTokenCreateSerializer'
+
 }
 
 AUTH_USER_MODEL = 'core.User'
 
 DJOSER = {
-    'LOGIN_FIELD': 'email',
-    'USER_CREATE_PASSWORD_RETYPE': True,
-    'ACTIVATION_URL': 'activate/{uid}/{token}',
-    'SEND_ACTIVATION_EMAIL': True,
-    'SEND_CONFIRMATION_EMAIL': True,
-    'PASSWORD_CHANGE_EMAIL_CONFIRMATION': True,
-    'PASSWORD_RESET_CONFIRM_URL': 'account/reset_password_confirm/{uid}/{token}',
-    'SET_PASSWORD_RETYPE': True,
-    'USERNAME_RESET_SHOW_EMAIL_NOT_FOUND': True,
+    'USER_ID_FIELD': 'imei',
+    'LOGIN_FIELD': 'imei',
+    "USER_CREATE_PASSWORD_RETYPE": False,
+    'SERIALIZERS': {
+        'user_create': 'core.serializers.CustomUserCreateSerializer',
+        'user': 'core.serializers.CustomUserSerializer',
+        'current_user':'core.serializers.CustomUserSerializer',
+        'token_create': 'core.serializers.CustomTokenCreateSerializer'
+        
+    }
 }
 
-# Email Configurations
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get("EMAIL_USER")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD")
-EMAIL_USE_TLS = True
+
+
 
 ASSEMBLYAI_API_KEY = os.environ.get("ASSEMBLYAI_API_KEY")
 
-# Configuration Liara
-
-LIARA_ENDPOINT = os.environ.get("LIARA_ENDPOINT")
-LIARA_BUCKET_NAME = os.environ.get("LIARA_BUCKET_NAME")
-LIARA_ACCESS_KEY = os.environ.get("LIARA_ACCESS_KEY")
-LIARA_SECRET_KEY = os.environ.get("LIARA_SECRET_KEY")
-
-AWS_ACCESS_KEY_ID = LIARA_ACCESS_KEY
-AWS_SECRET_ACCESS_KEY = LIARA_SECRET_KEY
-AWS_STORAGE_BUCKET_NAME = LIARA_BUCKET_NAME
-AWS_S3_ENDPOINT_URL = LIARA_ENDPOINT
-AWS_S3_REGION_NAME = 'us-east-2'
-AWS_S3_SIGNATURE_VERSION = 's3v4'
-
-STORAGES = {
-    'default': {
-        'BACKEND': 'storages.backends.s3boto3.S3Boto3Storage',
-        'OPTIONS': {
-            'bucket_name': LIARA_BUCKET_NAME,
-            'endpoint_url': LIARA_ENDPOINT,
-            'access_key': LIARA_ACCESS_KEY,
-            'secret_key': LIARA_SECRET_KEY,
-        }
-    },
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-    },
-
-}
