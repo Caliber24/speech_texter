@@ -16,8 +16,7 @@ class CustomUserManager(BaseUserManager):
     return user
   
   def create_superuser(self, imei, password, **extra_fields):
-    extra_fields.setdefault('is_staff', True)
-    extra_fields.setdefault('is_superuser', True)
+    extra_fields.setdefault('is_admin', True)
     return self.create_user(imei=imei, password=password, **extra_fields)
 
 class User(AbstractBaseUser):
@@ -45,4 +44,5 @@ class User(AbstractBaseUser):
       self.password = make_password(raw_password)
     else:
       self.password = None
-      self.save()
+    
+    self.save()

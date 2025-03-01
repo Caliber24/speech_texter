@@ -35,7 +35,8 @@ class VTTViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListModelMixin,
             for chunk in audio_file.chunks():
                 tmp.write(chunk)
                 tmp.flush()
+            tmp.close()
             transcription = transcribe_audio(tmp.name)     
-            vtt_instance = serializer.save(user=request.user, audio=audio_file, transcript=transcription)
+            vtt_instance = serializer.save(user=request.user, audio=audio_file.name, transcript=transcription)
             os.remove(tmp.name)
         return Response(VTTSerializer(vtt_instance).data, status=status.HTTP_201_CREATED)
