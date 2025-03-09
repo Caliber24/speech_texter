@@ -18,3 +18,5 @@ djoser
 whisper
 pymupdf
 PyPDF2
+openai-whisper
+setuptools-rust
