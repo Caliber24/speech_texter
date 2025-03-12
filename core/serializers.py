@@ -12,8 +12,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
 class CustomUserCreateSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
-    fields = ['imei', 'password']
-    extra_kwargs = {'password':{'write_only':True, 'required': False}}
+    fields = ['imei']
+    extra_kwargs = {}
   
   def validate(self, attrs):
     if 'password' not in attrs:
