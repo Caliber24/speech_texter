@@ -28,8 +28,7 @@ class VTTViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListModelMixin,
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        audio_file: UploadedFile = serializer.validated_data['audio']
-        print(audio_file)
+        audio_file: UploadedFile = serializer.validated_data.pop('audio')
         
         with tempfile.NamedTemporaryFile(suffix=os.path.splitext(audio_file.name)[1], delete=False) as tmp:
             for chunk in audio_file.chunks():
@@ -37,6 +36,6 @@ class VTTViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListModelMixin,
                 tmp.flush()
             tmp.close()
             transcription = transcribe_audio(tmp.name)     
-            vtt_instance = serializer.save(user=request.user, audio=audio_file.name, transcript=transcription)
+            vtt_instance = serializer.save(user=request.user, transcript=transcription)
             os.remove(tmp.name)
-        return Response(VTTSerializer(vtt_instance).data, status=status.HTTP_201_CREATED)
+        return Response(self.get_serializer(vtt_instance).data, status=status.HTTP_201_CREATED)
