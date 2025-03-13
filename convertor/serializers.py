@@ -11,6 +11,5 @@ class VTTSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
       audio_file = validated_data.pop('audio', None)
-      print("chiiiie" + validated_data)
       instance = VTT.objects.create(**validated_data)
       return instance
