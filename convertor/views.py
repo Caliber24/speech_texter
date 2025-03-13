@@ -1,36 +1,41 @@
-import os.path
-import whisper
-from rest_framework.viewsets import ModelViewSet, GenericViewSet, mixins, generics
+import os
+from email.policy import default
+import tempfile
+from rest_framework.viewsets import GenericViewSet, mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import VTTSerializer
 from .models import VTT
-
+import uuid
+from django.core.files.storage import default_storage
+from .convertor import transcribe_audio
+from django.core.files.uploadedfile import UploadedFile
+from django.conf import settings
 import os
+
+
 # Create your views here.
 
+class VTTViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
+                 mixins.DestroyModelMixin):
+    serializer_class = VTTSerializer
+    permission_classes = [IsAuthenticated]
 
-class VTTViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin):
-  serializer_class = VTTSerializer
-  permission_classes = [IsAuthenticated]
-  def get_queryset(self):
-      return VTT.objects.filter(user_id=self.request.user.id)
-  
-  def perform_create(self, serializer):
-    instance = serializer.save(user=self.request.user)
-    audio_file_path = os.path.abspath(instance.audio.path)
-    print(audio_file_path)
-    try:
-      transcript = self.convert_audio_to_text(audio_file_path)
-      instance.transcript = transcript
-      instance.save()
-    except Exception as e:
-      print(f"Error during audio-to-text conversion: {e}" )
-      if os.path.exists(audio_file_path):
-          os.remove(audio_file_path)
-      return Response({'error': e},  status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-  def convert_audio_to_text(self, audio_file_path):
-    model = whisper.load_model('tiny')
-    result = model.transcribe(audio_file_path)
-    return result['text']
+    def get_queryset(self):
+        return VTT.objects.filter(user_id=self.request.user.id)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        audio_file: UploadedFile = serializer.validated_data.pop('audio')
+        
+        with tempfile.NamedTemporaryFile(suffix=os.path.splitext(audio_file.name)[1], delete=False) as tmp:
+            for chunk in audio_file.chunks():
+                tmp.write(chunk)
+                tmp.flush()
+            tmp.close()
+            transcription = transcribe_audio(tmp.name)     
+            vtt_instance = serializer.save(user=request.user, transcript=transcription)
+            os.remove(tmp.name)
+        return Response(self.get_serializer(vtt_instance).data, status=status.HTTP_201_CREATED)

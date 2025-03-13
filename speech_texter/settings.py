@@ -14,7 +14,6 @@ from pathlib import Path
 from datetime import timedelta
 import os
 from dotenv import load_dotenv
-
 load_dotenv()
 DOMAIN = "localhost:5173"
 SITE_NAME = "SPEECH TEXTER"
@@ -36,30 +35,29 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "storages",
-    "corsheaders",
-    "rest_framework",
-    "drf_yasg",
-    "djoser",
-    "core",
-    "convertor",
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'rest_framework',
+    'drf_yasg',
+    'corsheaders',
+    'djoser',
+    'core',
+    'convertor'
 ]
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = "speech_texter.urls"
@@ -80,7 +78,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "speech_texter.wsgi.application"
+WSGI_APPLICATION = 'speech_texter.wsgi.application'
+
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -133,42 +132,39 @@ STATIC_ROOT = BASE_DIR / "static"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-AUTHENTICATION_BACKENDS = [
-    "core.auth_backends.CustomAuthBackend",
-    "django.contrib.auth.backends.ModelBackend",
-]
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication"
+    'DEFAULT_AUTHENTICATION_CLASSES':[
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
     ]
 }
 
 SIMPLE_JWT = {
-    "AUTH_HEADER_TYPES": ("JWT",),
-    "UPDATE_LAST_LOGIN": True,
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=365),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=365 * 5),
-    "TOKEN_OBTAIN_SERIALIZER": "core.serializers.CustomTokenCreateSerializer",
+    'AUTH_HEADER_TYPES': ('JWT',),
+    'UPDATE_LAST_LOGIN': True,
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=6)
 }
 
 AUTH_USER_MODEL = "core.User"
 
 DJOSER = {
-    "USER_ID_FIELD": "imei",
-    "LOGIN_FIELD": "imei",
+    'USER_ID_FIELD': 'imei',
+    'LOGIN_FIELD': 'imei',
     "USER_CREATE_PASSWORD_RETYPE": False,
-    "SERIALIZERS": {
-        "user_create": "core.serializers.CustomUserCreateSerializer",
-        "user": "core.serializers.CustomUserSerializer",
-        "current_user": "core.serializers.CustomUserSerializer",
-        "token_create": "core.serializers.CustomTokenCreateSerializer",
-    },
+    'SERIALIZERS': {
+        'user_create': 'core.serializers.CustomUserCreateSerializer',
+        'user': 'core.serializers.CustomUserSerializer',
+        'current_user':'core.serializers.CustomUserSerializer',
+        'token_create': 'core.serializers.CustomTokenCreateSerializer'
+        
+    }
 }
 
 
-ASSEMBLYAI_API_KEY = os.environ.get("ASSEMBLYAI_API_KEY")
 
+
+ASSEMBLYAI_API_KEY = os.environ.get("ASSEMBLYAI_API_KEY")
 UPLOAD_IMAGE_SIZE_LIMIT_MB = 10
 PDF_SIZE_LIMIT_MB = 20
 PDF_PAGE_LIMIT = 30
