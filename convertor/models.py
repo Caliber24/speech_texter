@@ -10,7 +10,7 @@ from .validators import validate_audio_file
 class VTT(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='VTTs',
                              on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, null=True, blank=True)
     transcript = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
