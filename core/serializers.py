@@ -6,13 +6,14 @@ from .models import User
 class CustomUserSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
-    fields = ['imei', 'is_active', 'is_admin']
+    fields = ['id','imei', 'is_active', 'is_admin']
 
 
 class CustomUserCreateSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
-    fields = ['imei']
+    fields = ['id','imei']
+    extra_kwargs = {}
 
   
   def validate(self, attrs):
@@ -23,6 +24,7 @@ class CustomUserCreateSerializer(serializers.ModelSerializer):
   def create(self, validated_data):
     password = validated_data.pop('password', None)
     user = User.objects.create_user(imei=validated_data['imei'], password=password)
+
     return user
   
 
