@@ -14,6 +14,7 @@ class CustomUserCreateSerializer(serializers.ModelSerializer):
     model = User
     fields = ['id','imei']
     extra_kwargs = {}
+
   
   def validate(self, attrs):
     if 'password' not in attrs:
@@ -23,7 +24,7 @@ class CustomUserCreateSerializer(serializers.ModelSerializer):
   def create(self, validated_data):
     password = validated_data.pop('password', None)
     user = User.objects.create_user(imei=validated_data['imei'], password=password)
-    # serializers = CustomUserCreateSerializer(user)
+
     return user
   
 
