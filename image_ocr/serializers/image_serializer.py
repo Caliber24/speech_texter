@@ -5,9 +5,12 @@ from django.conf import settings
 
 
 class ImageUploadSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(max_length=255, required=True)
+    user_id = serializers.CharField(max_length=255, required=True)
+    
     class Meta:
         model = ImageModel
-        fields = ["image"]
+        fields = ["image", "title", "user_id"]
         extra_kwargs = {
             "image": {
                 "required": True,
@@ -36,4 +39,14 @@ class ImageUploadSerializer(serializers.ModelSerializer):
                 f"حجم فایل نباید بیشتر از {settings.UPLOAD_IMAGE_SIZE_LIMIT_MB} مگابایت باشد"
             )
 
+        return value
+
+    def validate_user_id(self, value):
+        if not value or value.strip() == "":
+            raise serializers.ValidationError("شناسه کاربر نمی‌تواند خالی باشد")
+        return value
+        
+    def validate_title(self, value):
+        if not value or value.strip() == "":
+            raise serializers.ValidationError("عنوان نمی‌تواند خالی باشد")
         return value
