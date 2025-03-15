@@ -147,7 +147,8 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),
     'UPDATE_LAST_LOGIN': True,
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=6)
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=6),
+    'TOKEN_OBTAIN_SERIALIZER':'core.serializers.CustomTokenCreateSerializer'
 }
 
 

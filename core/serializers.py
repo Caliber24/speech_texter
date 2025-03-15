@@ -23,8 +23,7 @@ class CustomUserCreateSerializer(serializers.ModelSerializer):
   def create(self, validated_data):
     password = validated_data.pop('password', None)
     user = User.objects.create_user(imei=validated_data['imei'], password=password)
-    serializers = CustomUserCreateSerializer(user)
-    return serializers.data
+    return user
   
 
 class CustomTokenCreateSerializer(serializers.Serializer):
