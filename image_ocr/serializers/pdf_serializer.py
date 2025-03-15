@@ -13,6 +13,8 @@ class PDFUploadSerializer(serializers.Serializer):
             FileExtensionValidator(allowed_extensions=["pdf"]),  # اعتبارسنجی پسوند فایل
         ],
     )
+    title = serializers.CharField(max_length=255, required=True)
+    user_id = serializers.CharField(max_length=255, required=True)
 
     def validate_pdf(self, value):
         # اعتبارسنجی نوع MIME واقعی فایل
@@ -33,4 +35,14 @@ class PDFUploadSerializer(serializers.Serializer):
                 raise e
             raise serializers.ValidationError(f"خطا در خواندن PDF: {str(e)}")
 
+        return value
+        
+    def validate_user_id(self, value):
+        if not value or value.strip() == "":
+            raise serializers.ValidationError("شناسه کاربر نمی‌تواند خالی باشد")
+        return value
+        
+    def validate_title(self, value):
+        if not value or value.strip() == "":
+            raise serializers.ValidationError("عنوان نمی‌تواند خالی باشد")
         return value
