@@ -160,3 +160,5 @@ cython_debug/
 .idea/
 media/*.mp3
 uploads/*.mp3
+test_convertor_api.py
+**/tests.py

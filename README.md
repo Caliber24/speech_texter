@@ -107,4 +107,43 @@ This ensures that each title is unique while maintaining readability.
 ### Timestamp Format
 
 All timestamps in API responses are in Unix timestamp format (seconds since epoch).
+
+## Voice to Text API
+
+### Endpoints
+
+#### 1. Create a Voice-to-Text Transcription
+
+- **URL**: `/voice-to-text/`
+- **Method**: `POST`
+- **Authentication**: Required
+- **Request Body**:
+  - `audio`: Audio file (required)
+  - `title`: Title for the transcription (required)
+  - `user_id`: User ID (automatically set from authenticated user)
+- **Response**: Transcription details including ID, title, transcript, and creation timestamp
+- **Duplicate Title Handling**: When a title already exists for a user, the system automatically appends an incremented number in parentheses:
+  - Original: "My Title"
+  - If exists: "My Title (1)"
+  - If "My Title (1)" exists: "My Title (2)"
+
+#### 2. List User's Transcriptions
+
+- **URL**: `/voice-to-text/`
+- **Method**: `GET`
+- **Authentication**: Required
+- **Response**: List of user's transcriptions
+
+#### 3. Get Transcriptions After Timestamp
+
+- **URL**: `/voice-to-text/after-timestamp/`
+- **Method**: `GET`
+- **Authentication**: Required
+- **Query Parameters**:
+  - `timestamp`: Unix timestamp (seconds since epoch)
+- **Response**: List of user's transcriptions created after the specified timestamp
+
+## OCR Services
+
+[OCR service documentation here]
  
