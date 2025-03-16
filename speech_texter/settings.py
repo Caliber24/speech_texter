@@ -14,7 +14,7 @@ from pathlib import Path
 from datetime import timedelta
 import os
 from dotenv import load_dotenv
-
+import pytesseract
 
 load_dotenv()
 DOMAIN = "localhost:5173"
@@ -242,6 +242,8 @@ LOGGING = {
     },
 }
 
+# IMPORTANT FOR OCR
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 # ایجاد دایرکتوری لاگ‌ها اگر وجود نداشته باشد
 LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 if not os.path.exists(LOGS_DIR):
