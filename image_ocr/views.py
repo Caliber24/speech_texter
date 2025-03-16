@@ -16,7 +16,7 @@ from django.core.cache import cache
 from django.utils.crypto import get_random_string
 import time
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
-
+from rest_framework.permissions import IsAuthenticated
 # تنظیم لاگر
 logger = logging.getLogger(__name__)
 
@@ -34,6 +34,7 @@ class ImageOCRView(APIView):
     POST:
     دریافت عکس و برگرداندن متن استخراج شده
     """
+    permission_classes = [IsAuthenticated]
     throttle_classes = [OCRRateThrottle, OCRUserRateThrottle]
 
     def post(self, request):
@@ -140,6 +141,8 @@ class PDFOCRView(APIView):
     POST:
     دریافت PDF و برگرداندن متن استخراج شده با شماره صفحات
     """
+    permission_classes = [IsAuthenticated]
+
     throttle_classes = [OCRRateThrottle, OCRUserRateThrottle]
 
     def post(self, request):
