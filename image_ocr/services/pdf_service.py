@@ -6,6 +6,7 @@ import fitz
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import math
+import uuid
 
 # تنظیم لاگر
 logger = logging.getLogger(__name__)
@@ -31,10 +32,10 @@ class PDFService:
         Raises:
             PDFException: در صورت خطا در تبدیل PDF
         """
+        image_paths = []
         try:
             doc = fitz.open(pdf_path)
             total_pages = len(doc)
-            image_paths = []
             
             # تقسیم صفحات به دسته‌های کوچکتر برای مدیریت حافظه
             batches = math.ceil(total_pages / batch_size)
@@ -81,17 +82,40 @@ class PDFService:
             # به جای پرتاب خطا، لیست خالی برمی‌گردانیم تا فرآیند ادامه یابد
             # اما اگر هیچ تصویری تولید نشده باشد، خطا پرتاب می‌کنیم
             if not image_paths:
+                # پاکسازی فایل‌های موقت در صورت وجود
+                PDFService._cleanup_temp_files(image_paths)
                 raise PDFException(error_msg)
             return image_paths
+        except:
+            # پاکسازی فایل‌های موقت در صورت بروز هر خطای دیگر
+            PDFService._cleanup_temp_files(image_paths)
+            raise
+    
+    @staticmethod
+    def _cleanup_temp_files(file_paths):
+        """پاکسازی فایل‌های موقت"""
+        for path in file_paths:
+            try:
+                if path and os.path.exists(path):
+                    os.remove(path)
+                    logger.debug(f"Temporary file removed: {path}")
+            except Exception as e:
+                logger.error(f"Error removing temporary file {path}: {str(e)}")
     
     @staticmethod
     def _convert_page_to_image(doc, page_num, zoom):
         """تبدیل یک صفحه از PDF به تصویر"""
         try:
+            # ایجاد یک نام منحصر به فرد با استفاده از UUID
+            unique_id = str(uuid.uuid4())
+            # استفاده از دایرکتوری موقت سیستم
+            temp_dir = tempfile.gettempdir()
+            img_filename = f"page_{page_num+1}_{unique_id}.png"
+            img_path = os.path.join(temp_dir, img_filename)
+            
             page = doc.load_page(page_num)
             mat = fitz.Matrix(zoom, zoom)
             pix = page.get_pixmap(matrix=mat)
-            img_path = f"page_{page_num+1}.png"
             pix.save(img_path)
             return img_path
         except Exception as e:
